@@ -1,0 +1,14 @@
+version: "3.5"
+services:
+  dropbot:
+    image: ghcr.io/tychothetaco/twitch-drops-bot
+    container_name: dropbot
+    user: uid:gid
+    network_mode: "host"
+    volumes:
+      - dropbot_data:/app/data
+    restart: "unless-stopped"
+
+volumes:
+  dropbot_data:
+    name: dropbot_data
