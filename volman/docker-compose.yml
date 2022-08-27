@@ -3,6 +3,7 @@ services:
   volman:
     image: ubuntu
     container_name: volman
+    command: sleep infinity
     volumes:
       - data:/foo
 
