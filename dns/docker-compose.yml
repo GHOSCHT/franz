@@ -1,0 +1,54 @@
+version: '2'
+
+services: 
+  pihole:
+    container_name: pihole
+    image: pihole/pihole
+
+    hostname: pihole
+    volumes:
+      - pihole_dnsmasq:/etc/dnsmasq.d
+      - pihole_data:/etc/pihole
+    restart: always
+    environment:
+      - IPv6=True
+      - TZ=Europe/Berlin
+      - SKIPGRAVITYONBOOT=1
+      - VIRTUAL_HOST=pihole
+    ports:
+     - "53:53/tcp"
+     - "53:53/udp"
+     - "8420:80"
+    cap_add:
+      - NET_ADMIN
+    networks:
+      traefik_net:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pihole.entrypoints=web
+      - traefik.http.routers.pihole.rule=Host(`pihole.franz.local`)
+      - traefik.http.services.pihole.loadbalancer.server.port=80
+
+  unbound:
+    container_name: unbound
+    image: mvance/unbound-rpi
+    volumes:
+      - unbound_data:/opt/unbound/etc/unbound
+    dns:
+      - 1.1.1.1
+    restart: always
+    networks:
+      traefik_net:
+        
+networks: 
+  traefik_net:
+    name: traefik-net
+    external: true
+
+volumes:
+  pihole_dnsmasq:
+    name: pihole_dnsmasq
+  pihole_data:
+    name: pihole_data
+  unbound_data:
+    name: unbound_data
