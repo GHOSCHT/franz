@@ -1,11 +1,9 @@
 version: '2'
 
-services: 
+services:
   pihole:
     container_name: pihole
     image: pihole/pihole
-
-    hostname: pihole
     volumes:
       - pihole_dnsmasq:/etc/dnsmasq.d
       - pihole_data:/etc/pihole
@@ -14,15 +12,17 @@ services:
       - IPv6=True
       - TZ=Europe/Berlin
       - SKIPGRAVITYONBOOT=1
-      - VIRTUAL_HOST=pihole
+      - VIRTUAL_HOST=pihole.franz.local
     ports:
      - "53:53/tcp"
      - "53:53/udp"
-     - "8420:80"
+     - 8420:80
     cap_add:
       - NET_ADMIN
     networks:
       traefik_net:
+      dns_net:
+        ipv4_address: 172.28.1.6
     labels:
       - traefik.enable=true
       - traefik.http.routers.pihole.entrypoints=web
@@ -31,7 +31,7 @@ services:
 
   unbound:
     container_name: unbound
-    image: mvance/unbound-rpi
+    image: klutchell/unbound:edge
     volumes:
       - unbound_data:/opt/unbound/etc/unbound
     dns:
@@ -39,11 +39,22 @@ services:
     restart: always
     networks:
       traefik_net:
-        
-networks: 
+      dns_net:
+        ipv4_address: 172.28.1.5
+
+networks:
   traefik_net:
     name: traefik-net
     external: true
+  dns_net:
+    name: dns-net
+    driver: bridge
+    ipam:
+      config:
+      -      
+        subnet: 172.28.1.0/24
+        ip_range: 172.28.1.5/30
+        gateway: 172.28.1.1
 
 volumes:
   pihole_dnsmasq:

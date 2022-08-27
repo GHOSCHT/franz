@@ -24,7 +24,7 @@ services:
     image: "louislam/uptime-kuma"
     volumes:
       - kuma_data:/app/data
-    restart: always   
+    restart: always
     networks:
       traefik_net:
     dns:
@@ -43,16 +43,15 @@ services:
       - flame_secrets.env
     restart: always
     networks:
-      traefik_net:  
-        ipv4_address: 172.26.0.2
+      traefik_net:
     labels:
       - traefik.enable=true
       - traefik.http.routers.flame.entrypoints=web
       - traefik.http.routers.flame.rule=Host(`franz.local`)
     dns:
       - 1.1.1.1
-    
-networks: 
+
+networks:
   traefik_net:
     name: traefik-net
     driver: bridge
