@@ -1,0 +1,12 @@
+version: "3.5"
+services:
+  volman:
+    image: ubuntu
+    container_name: volman
+    volumes:
+      - data:/foo
+
+volumes:
+  data:
+    name: dropbot_data
+    external: true
