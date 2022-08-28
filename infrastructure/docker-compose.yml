@@ -50,12 +50,29 @@ services:
       - traefik.http.routers.flame.rule=Host(`franz.local`)
     dns:
       - 1.1.1.1
+    profiles:
+      - donotstart
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: always
+    volumes:
+      - homarr_data:/app/data/configs
+      - homarr_icons:/app/public/icons
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      traefik_net:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homarr.entrypoints=web
+      - traefik.http.routers.homarr.rule=Host(`franz.local`)
+
 
 networks:
   traefik_net:
     name: traefik-net
     driver: bridge
-
+    external: true
 volumes:
   traefik_data:
     name: traefik_data
@@ -63,3 +80,7 @@ volumes:
     name: kuma_data
   flame_data:
     name: flame_data
+  homarr_data:
+    name: homarr_data
+  homarr_icons:
+    name: homarr_icons
