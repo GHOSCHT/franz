@@ -52,7 +52,7 @@ networks:
     driver: bridge
     ipam:
       config:
-      -      
+      -
         subnet: 172.28.1.0/24
         ip_range: 172.28.1.5/30
         gateway: 172.28.1.1
