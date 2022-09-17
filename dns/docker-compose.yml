@@ -4,7 +4,7 @@ services:
   pihole:
     container_name: pihole
     hostname: pihole
-    image: pihole/pihole
+    image: pihole/pihole:2022.09.1
     volumes:
       - pihole_dnsmasq:/etc/dnsmasq.d
       - pihole_data:/etc/pihole
@@ -32,7 +32,7 @@ services:
 
   unbound:
     container_name: unbound
-    image: klutchell/unbound:edge
+    image: mvance/unbound:latest
     volumes:
       - unbound_data:/opt/unbound/etc/unbound
     dns:
