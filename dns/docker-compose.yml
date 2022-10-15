@@ -4,7 +4,7 @@ services:
   pihole:
     container_name: pihole
     hostname: pihole
-    image: pihole/pihole:2022.09.1
+    image: pihole/pihole:2022.09.4
     volumes:
       - pihole_dnsmasq:/etc/dnsmasq.d
       - pihole_data:/etc/pihole
