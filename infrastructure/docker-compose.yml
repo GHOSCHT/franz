@@ -33,6 +33,8 @@ services:
       - traefik.enable=true
       - traefik.http.routers.kuma.entrypoints=web
       - traefik.http.routers.kuma.rule=Host(`kuma.franz.local`)
+    profiles:
+      - donotstart
   flame:
     image: pawelmalak/flame
     container_name: flame
