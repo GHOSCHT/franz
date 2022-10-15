@@ -1,6 +1,6 @@
 version: '2'
 
-services: 
+services:
   samba:
     container_name: samba
     image: dperson/samba
@@ -17,9 +17,50 @@ services:
         -s "public;/mount;yes;no;yes"
         -p
     networks:
-      net:  
-        ipv4_address: 172.26.0.7
-networks: 
+      net:
+  nextcloud-db:
+    image: mariadb:10.5
+    container_name: nextcloud-db
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - nextcloud_db:/var/lib/mysql
+    networks:
+      nas_net:
+    env_file:
+      - nextcloud_secrets.env
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    restart: always
+    volumes:
+      - nextcloud_data:/var/www/html
+    env_file:
+      - nextcloud_secrets.env
+    environment:
+      - MYSQL_HOST=nextcloud-db
+      - PUID=1000
+      - PGID=1000
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.entrypoints=web
+      - traefik.http.routers.nextcloud.rule=Host(`nextcloud.franz.local`)
+      - traefik.docker.network=traefik-net
+    dns:
+      - 1.1.1.1
+    networks:
+      nas_net:
+      net:
+
+networks:
   net:
     name: traefik-net
     external: true
+  nas_net:
+    name: nas-net
+
+volumes:
+  nextcloud_data:
+    name: nextcloud_data
+  nextcloud_db:
+    name: nextcloud_db
