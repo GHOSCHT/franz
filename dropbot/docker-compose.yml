@@ -14,6 +14,12 @@ services:
     volumes:
       - dropbot_p_data:/app/data
     restart: "unless-stopped"
+  owl_tokenbot:
+    #self-built image of https://github.com/ucarno/ow-league-tokens
+    image: owl-token-bot
+    container_name: owl_tokenbot
+    entrypoint: [ "python", "./main.py", "nomenu", "--owl", "--owc", "--ids", "446264967" ]
+    restart: unless-stopped
 
 volumes:
   dropbot_m_data:
