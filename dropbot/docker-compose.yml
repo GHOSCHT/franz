@@ -1,13 +1,22 @@
 version: "3.5"
 services:
-  dropbot:
+  dropbot_m:
     image: ghcr.io/tychothetaco/twitch-drops-bot
-    container_name: dropbot
-    user: uid:gid
+    container_name: dropbot_m
+    user: 1000:1000
     volumes:
-      - dropbot_data:/app/data
+      - dropbot_m_data:/app/data
+    restart: "unless-stopped"
+  dropbot_p:
+    image: ghcr.io/tychothetaco/twitch-drops-bot
+    container_name: dropbot_p
+    user: 1000:1000
+    volumes:
+      - dropbot_p_data:/app/data
     restart: "unless-stopped"
 
 volumes:
-  dropbot_data:
-    name: dropbot_data
+  dropbot_m_data:
+    name: dropbot_m_data
+  dropbot_p_data:
+    name: dropbot_p_data
