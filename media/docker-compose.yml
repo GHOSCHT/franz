@@ -17,18 +17,23 @@ services:
       - traefik.http.routers.jellyfin.rule=Host(`jellyfin.franz.local`)
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     restart: always
-    dns: 
+    environment:
+    - PUID=1000
+    - PGID=1000
+    dns:
       - 1.1.1.1
   vpn:
     image: wiorca/docker-windscribe
     container_name: windscribe
-    environment:      
+    environment:
       - TZ=Europe/Berlin
       - WINDSCRIBE_PROTOCOL=stealth
       - WINDSCRIBE_PORT=80
       - WINDSCRIBE_LOCATION=NL
       - WINDSCRIBE_LANBYPASS=on
       - WINDSCRIBE_FIREWALL=on
+      - PUID=1000
+      - PGID=1000
     env_file:
       - windscribe_secrets.env
     volumes:
@@ -37,8 +42,8 @@ services:
       - /mnt/Serien:/series
     cap_add:
       - NET_ADMIN
-    restart: unless-stopped
-    dns: 
+    restart: always
+    dns:
       - 1.1.1.1
     networks:
       traefik_net:
@@ -48,6 +53,8 @@ services:
     container_name: transmission
     environment:
       - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
     volumes:
       - transmission_data:/config
       - /mnt/Downloads:/downloads
@@ -60,15 +67,17 @@ services:
       - traefik.http.routers.transmission.rule=Host(`transmission.franz.local`)
       - traefik.http.services.transmission.loadbalancer.server.port=9091
       - traefik.docker.network=traefik-net
-
+    restart: always
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
     environment:
       - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
     volumes:
       - prowlarr_data:/config
-    restart: unless-stopped
+    restart: always
     network_mode: service:vpn
     depends_on:
       - vpn
@@ -85,11 +94,13 @@ services:
     container_name: radarr
     environment:
       - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
     volumes:
       - radarr_data:/config
       - /mnt/Filme:/movies
       - /mnt/Downloads:/downloads
-    restart: unless-stopped
+    restart: always
     network_mode: service:vpn
     depends_on:
       - vpn
@@ -107,11 +118,13 @@ services:
     container_name: sonarr
     environment:
       - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
     volumes:
       - sonarr_data:/config
       - /mnt/Serien:/series
       - /mnt/Downloads:/downloads
-    restart: unless-stopped
+    restart: always
     network_mode: service:vpn
     depends_on:
       - vpn
@@ -125,33 +138,36 @@ services:
       - traefik.docker.network=traefik-net
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr
+    image: hotio/bazarr:latest
     container_name: bazarr
     environment:
       - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
     volumes:
       - bazarr_data:/config
       - /mnt/Filme:/movies
       - /mnt/Serien:/series
-    restart: unless-stopped
-    network_mode: service:vpn
-    depends_on:
-      - vpn
-      - torrent
-      - prowlarr
+    restart: always
     labels:
       - traefik.enable=true
       - traefik.http.routers.bazarr.entrypoints=web
       - traefik.http.routers.bazarr.rule=Host(`bazarr.franz.local`)
       - traefik.http.services.bazarr.loadbalancer.server.port=6767
       - traefik.docker.network=traefik-net
+    networks:
+      traefik_net:
+    dns:
+      - 1.1.1.1
 
   jellyseerr:
     container_name: jellyseerr
     image: fallenbagel/jellyseerr
     environment:
       - TZ=Europe/Berlin
-    restart: unless-stopped
+      - PUID=1000
+      - PGID=1000
+    restart: always
     volumes:
       - jellyseerr_data:/app/config
     depends_on:
@@ -166,7 +182,7 @@ services:
       - traefik.docker.network=traefik-net
     networks:
       traefik_net:
-    dns: 
+    dns:
       - 1.1.1.1
 
 
@@ -183,7 +199,7 @@ volumes:
   jellyfin_cache:
     name: jellyfin_cache
   transmission_data:
-    name: transmission_data  
+    name: transmission_data
   sonarr_data:
     name: sonarr_data
   prowlarr_data:
