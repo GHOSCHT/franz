@@ -61,7 +61,6 @@ services:
     volumes:
       - homarr_data:/app/data/configs
       - homarr_icons:/app/public/icons
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       traefik_net:
     labels:
