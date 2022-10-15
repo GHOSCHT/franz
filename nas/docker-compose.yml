@@ -5,7 +5,7 @@ services:
     container_name: samba
     image: dperson/samba
     volumes:
-      - /media/hdd/nas:/mount
+      - /mnt/nas:/mount
     environment:
       - USERID=1000
       - GROUPID=1000
